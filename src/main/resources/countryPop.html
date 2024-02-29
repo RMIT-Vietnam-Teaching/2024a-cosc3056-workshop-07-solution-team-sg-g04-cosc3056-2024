@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+   <title>Find Population By City</title>
+
+   <link rel="stylesheet" type="text/css" href="common.css" />
+</head>
+<body>
+   <div class='topnav'>
+      <a href='/'>Homepage</a>
+      <a href='/countryPop'>Find Population By City</a>
+   </div>
+   
+   <div class='header'>
+      <h1 th:text="${title}"></h1>
+   </div>
+
+   <div class='content'>
+
+      <form action="/countryPop" method="POST">
+
+         <!-- 
+            Display all countries from the database 
+            Set the default selected value as the previously selected country
+         -->
+         <select name="targetCountry" id="targetCountry">
+         
+            <option th:each = "country: ${countries}" 
+                    th:text="${country.name}" 
+                    th:value="${country.code}" 
+                    th:selected="${country.code == selectedCountry}">
+            </option>
+
+         </select>
+
+         <input type="submit" value="Select Country"/>
+      </form>
+
+      <div th:if = "${selectedCountry} != null">
+         <form action="/countryPop" method="POST">
+
+            <select name="targetCity" id="targetCity">
+               <option th:each = "city: ${cities}" 
+                     th:text = "${city.name}"
+                     th:value = "${city.name} + '|' + ${city.population}"
+                     th:selected="${selectedCity != null && city.name == selectedCity.name}">
+               </option>
+            </select>
+
+            <input type="hidden" name="targetCountry" th:value="${selectedCountry}"/>
+
+            <input type="submit" value="Get Population"/>
+         </form>
+      </div>
+
+      <h3 th:if = "${selectedCity} != null" 
+          th:text = "|Population of ${selectedCity.name} is 
+                     ${#numbers.formatDecimal(selectedCity.population, 0, 'COMMA', 0, 'POINT')} people|">
+      </h3>
+
+   </div>
+
+   <div class='footer'>
+      <p>COSC3056 Workshop Module - Week 08</p>
+   </div>
+</body>
+</html>
